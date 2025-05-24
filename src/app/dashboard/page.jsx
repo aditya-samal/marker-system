@@ -166,7 +166,9 @@ export default function Dashboard() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Upload Section */}
         <div className="bg-white rounded-lg shadow-sm border p-6 mb-8">
-          <h2 className="text-lg font-semibold mb-4">Upload CSV File</h2>
+          <h2 className=" text-black text-lg font-semibold mb-4">
+            Upload CSV File
+          </h2>
           <div className="flex items-center space-x-4">
             <label className="block">
               <input
@@ -188,7 +190,7 @@ export default function Dashboard() {
         <div className="bg-white rounded-lg shadow-sm border p-6 mb-8">
           <div className="flex justify-between items-center">
             <div>
-              <h2 className="text-lg font-semibold">Export Data</h2>
+              <h2 className="text-black text-lg font-semibold">Export Data</h2>
               <p className="text-sm text-gray-500">
                 Download Excel report with all student data
               </p>
@@ -206,7 +208,7 @@ export default function Dashboard() {
         {/* Students Table */}
         <div className="bg-white rounded-lg shadow-sm border">
           <div className="px-6 py-4 border-b">
-            <h2 className="text-lg font-semibold">
+            <h2 className="text-black text-lg font-semibold">
               All Students ({students.length})
             </h2>
           </div>
