@@ -54,7 +54,7 @@ export async function GET() {
     });
 
     // Create response
-    return new NextResponse(buffer, {
+    return new NextResponse(new Uint8Array(buffer), {
       status: 200,
       headers: {
         "Content-Type":
@@ -62,6 +62,10 @@ export async function GET() {
         "Content-Disposition": `attachment; filename="students_report_${
           new Date().toISOString().split("T")[0]
         }.xlsx"`,
+        "Cache-Control":
+          "no-store, no-cache, must-revalidate, proxy-revalidate",
+        Expires: "0",
+        Pragma: "no-cache",
       },
     });
   } catch (error) {
