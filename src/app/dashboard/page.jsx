@@ -87,6 +87,13 @@ export default function Dashboard() {
       );
 
       if (response.ok) {
+        const res = await fetch(
+          "http://localhost:3000/api/students/non-markers",
+          { method: "DELETE" }
+        );
+        if (!res.ok) {
+          throw new Error("Failed to delete non-marker students");
+        }
         fetchStudents();
       } else {
         alert("Failed to remove marker");
@@ -95,6 +102,19 @@ export default function Dashboard() {
       console.error("Error removing marker:", error);
       alert("Failed to remove marker");
     }
+  };
+
+  const getCategoryCounts = () => {
+    const counts = {};
+    students.forEach((student) => {
+      if (student.markers.length > 1) {
+        counts["Multiple"] = (counts["Multiple"] || 0) + 1;
+      } else {
+        const module = student.markers[0];
+        counts[module] = (counts[module] || 0) + 1;
+      }
+    });
+    return counts;
   };
 
   const handleExport = async () => {
@@ -185,7 +205,23 @@ export default function Dashboard() {
             CSV should have columns: IITG Email ID, Student Name
           </p>
         </div>
-
+        <div className="bg-white rounded-lg shadow-sm border p-6 mb-8">
+          <h2 className="text-black text-lg font-semibold mb-4">
+            Student Count by Category
+          </h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            {Object.entries(getCategoryCounts()).map(([module, count]) => (
+              <div
+                key={module}
+                className={`px-4 py-2 rounded-lg text-sm font-medium text-center shadow ${
+                  moduleColors[module] || "bg-gray-100 text-gray-800"
+                }`}
+              >
+                {module}: {count}
+              </div>
+            ))}
+          </div>
+        </div>
         {/* Export Section */}
         <div className="bg-white rounded-lg shadow-sm border p-6 mb-8">
           <div className="flex justify-between items-center">

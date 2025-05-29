@@ -109,4 +109,86 @@ export class StudentModel {
       throw error;
     }
   }
+  static async getAllNonMarkers() {
+    try {
+      const collection = await this.getCollection();
+      return await collection
+        .find({ markers: { $exists: true, $size: 0 } })
+        .sort({ slNo: 1 })
+        .toArray();
+    } catch (error) {
+      console.error("Error fetching non-marker students:", error);
+      throw error;
+    }
+  }
+
+  static async deleteAllNonMarkers() {
+    try {
+      const collection = await this.getCollection();
+      return await collection.deleteMany({
+        markers: { $exists: true, $size: 0 },
+      });
+    } catch (error) {
+      console.error("Error deleting non-marker students:", error);
+      throw error;
+    }
+  }
+
+  static async getCategoryWiseCount() {
+    try {
+      const collection = await this.getCollection();
+
+      const pipeline = [
+        {
+          $project: {
+            markers: 1,
+            markerCount: { $size: "$markers" },
+          },
+        },
+        {
+          $facet: {
+            singleMarkers: [
+              { $match: { markerCount: 1 } },
+              { $unwind: "$markers" },
+              {
+                $group: {
+                  _id: "$markers",
+                  count: { $sum: 1 },
+                },
+              },
+            ],
+            multipleMarkers: [
+              { $match: { markerCount: { $gt: 1 } } },
+              {
+                $group: {
+                  _id: "Multiple",
+                  count: { $sum: 1 },
+                },
+              },
+            ],
+          },
+        },
+        {
+          $project: {
+            categories: {
+              $concatArrays: ["$singleMarkers", "$multipleMarkers"],
+            },
+          },
+        },
+        { $unwind: "$categories" },
+        {
+          $project: {
+            category: "$categories._id",
+            count: "$categories.count",
+          },
+        },
+      ];
+
+      const result = await collection.aggregate(pipeline).toArray();
+      return result;
+    } catch (error) {
+      console.error("Error fetching category-wise count:", error);
+      throw error;
+    }
+  }
 }
